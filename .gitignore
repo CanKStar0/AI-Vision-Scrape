@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Environment (contains secrets)
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Playwright browser binaries (too large for git)
+# They should be installed via `npx playwright install chromium`
+
+# Test files and specific services
+*test*
+test-run.js
+akakceService.js
