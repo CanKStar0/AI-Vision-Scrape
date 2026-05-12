@@ -1,6 +1,5 @@
 import { chromium } from "playwright-extra";
 import stealth from "puppeteer-extra-plugin-stealth";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 
 chromium.use(stealth());
@@ -18,11 +17,13 @@ type JsonValue =
 function cleanJsonResponse(text: string): string {
   const trimmed = text.trim();
 
+  // Code fence block parsing (e.g. ```json ... ```)
   const fencedMatch = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
   if (fencedMatch) {
     return fencedMatch[1].trim();
   }
 
+  // XML-like tags (e.g. <json> ... </json>)
   const tagMatch = trimmed.match(/^<json>\s*([\s\S]*?)\s*<\/json>$/i);
   if (tagMatch) {
     return tagMatch[1].trim();
@@ -31,37 +32,44 @@ function cleanJsonResponse(text: string): string {
   return trimmed;
 }
 
-export class VisionEngine {
-  private model: ReturnType<GoogleGenerativeAI["getGenerativeModel"]>;
+/**
+ * A generic function type that takes a prompt and a base64 encoded image,
+ * and uses ANY AI model (OpenAI, Gemini, Anthropic, etc.) to evaluate it
+ * and return the models text response.
+ */
+export type AIProviderCallback = (prompt: string, imageBase64: string) => Promise<string>;
 
-  constructor(options?: { apiKey?: string }) {
-    const apiKey = options?.apiKey || process.env.GEMINI_API_KEY;
-    if (!apiKey) {
+export interface VisionEngineOptions {
+  /**
+   * The custom AI provider you want to use.
+   * Resolves the vendor lock-in. You can connect it to OpenAI GPT-4o, Anthropic Claude 3.5, Gemini 1.5 Pro, etc.
+   */
+  aiProvider: AIProviderCallback;
+}
+
+export class VisionEngine {
+  private aiProvider: AIProviderCallback;
+
+  constructor(options: VisionEngineOptions) {
+    if (!options || typeof options.aiProvider !== "function") {
       throw new Error(
-        "FATAL ERROR: API Key is missing. Provide it via options or GEMINI_API_KEY env variable."
+        "FATAL ERROR: aiProvider is missing. You must provide an AI processor callback to VisionEngine."
       );
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    this.model = genAI.getGenerativeModel({
-      model: "models/gemini-2.5-flash",
-      generationConfig: {
-        responseMimeType: "application/json",
-        temperature: 0.1,
-        maxOutputTokens: 2048,
-      },
-    });
+    this.aiProvider = options.aiProvider;
   }
 
   private buildPrompt(instruction: string): string {
     return [
-      "You are a data extraction engine.",
-      "Return ONLY valid JSON based on the user's instruction.",
+      "You are an advanced data extraction engine parsing visual content.",
+      "Analyze the attached page screenshot.",
+      "Return ONLY valid JSON based on the users instruction below.",
       "Do not include markdown, code fences, tags, or extra commentary.",
       "Use double quotes for all keys and string values.",
       "If the instruction implies multiple items, return a JSON array.",
       "If the instruction implies a single result, return a JSON object.",
-      `Instruction: ${instruction}`,
+      `Instruction: ${instruction}`
     ].join("\n");
   }
 
@@ -89,7 +97,7 @@ export class VisionEngine {
       });
       const page = await context.newPage();
       
-      // Bot korumalarını atlatmak için Navigator.webdriver sancağını sil
+      // Remove Navigator.webdriver for escaping simple bot protections
       await page.addInitScript(() => {
         Object.defineProperty(navigator, "webdriver", { get: () => undefined });
       });
@@ -103,24 +111,17 @@ export class VisionEngine {
       const screenshotBase64 = screenshotBuffer.toString("base64");
 
       const prompt = this.buildPrompt(instruction);
-      const result = await this.model.generateContent([
-        { text: prompt },
-        {
-          inlineData: {
-            mimeType: "image/png",
-            data: screenshotBase64,
-          },
-        },
-      ]);
 
-      const rawText = result.response.text();
+      // Agnostic AI Call (Delegated to user implementation)
+      const rawText = await this.aiProvider(prompt, screenshotBase64);
+      
       const cleanedText = cleanJsonResponse(rawText);
 
       try {
         return JSON.parse(cleanedText) as JsonValue;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        throw new Error(`Failed to parse JSON from Gemini: ${message}`);
+        throw new Error(`Failed to parse JSON from the AI Provider: ${message} \nRaw Response: ${rawText}`);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

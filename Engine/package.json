@@ -11,13 +11,11 @@
     "build": "tsc",
     "postinstall": "npx playwright install chromium && node scripts/copy-rules.js"
   },
-  
   "files": [
     "dist",
     "scripts",
     "ai-vision-scraper-rules.md"
   ],
-
   "keywords": [
     "scraping",
     "playwright",
@@ -28,7 +26,6 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
     "cheerio": "^1.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
@@ -41,5 +38,4 @@
     "@types/node": "^25.6.2",
     "typescript": "^6.0.3"
   }
-  
 }
