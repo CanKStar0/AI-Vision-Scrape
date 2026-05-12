@@ -1,15 +1,16 @@
 import { chromium } from "playwright-extra";
 import stealth from "puppeteer-extra-plugin-stealth";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 chromium.use(stealth());
 dotenv.config();
 function cleanJsonResponse(text) {
     const trimmed = text.trim();
+    // Code fence block parsing (e.g. ```json ... ```)
     const fencedMatch = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
     if (fencedMatch) {
         return fencedMatch[1].trim();
     }
+    // XML-like tags (e.g. <json> ... </json>)
     const tagMatch = trimmed.match(/^<json>\s*([\s\S]*?)\s*<\/json>$/i);
     if (tagMatch) {
         return tagMatch[1].trim();
@@ -17,31 +18,23 @@ function cleanJsonResponse(text) {
     return trimmed;
 }
 export class VisionEngine {
-    model;
+    aiProvider;
     constructor(options) {
-        const apiKey = options?.apiKey || process.env.GEMINI_API_KEY;
-        if (!apiKey) {
-            throw new Error("FATAL ERROR: API Key is missing. Provide it via options or GEMINI_API_KEY env variable.");
+        if (!options || typeof options.aiProvider !== "function") {
+            throw new Error("FATAL ERROR: aiProvider is missing. You must provide an AI processor callback to VisionEngine.");
         }
-        const genAI = new GoogleGenerativeAI(apiKey);
-        this.model = genAI.getGenerativeModel({
-            model: "models/gemini-2.5-flash",
-            generationConfig: {
-                responseMimeType: "application/json",
-                temperature: 0.1,
-                maxOutputTokens: 2048,
-            },
-        });
+        this.aiProvider = options.aiProvider;
     }
     buildPrompt(instruction) {
         return [
-            "You are a data extraction engine.",
-            "Return ONLY valid JSON based on the user's instruction.",
+            "You are an advanced data extraction engine parsing visual content.",
+            "Analyze the attached page screenshot.",
+            "Return ONLY valid JSON based on the users instruction below.",
             "Do not include markdown, code fences, tags, or extra commentary.",
             "Use double quotes for all keys and string values.",
             "If the instruction implies multiple items, return a JSON array.",
             "If the instruction implies a single result, return a JSON object.",
-            `Instruction: ${instruction}`,
+            `Instruction: ${instruction}`
         ].join("\n");
     }
     async extract(url, instruction, options = { fullPage: false }) {
@@ -64,7 +57,7 @@ export class VisionEngine {
                 timezoneId: "Europe/Istanbul",
             });
             const page = await context.newPage();
-            // Bot korumalarını atlatmak için Navigator.webdriver sancağını sil
+            // Remove Navigator.webdriver for escaping simple bot protections
             await page.addInitScript(() => {
                 Object.defineProperty(navigator, "webdriver", { get: () => undefined });
             });
@@ -75,23 +68,15 @@ export class VisionEngine {
             });
             const screenshotBase64 = screenshotBuffer.toString("base64");
             const prompt = this.buildPrompt(instruction);
-            const result = await this.model.generateContent([
-                { text: prompt },
-                {
-                    inlineData: {
-                        mimeType: "image/png",
-                        data: screenshotBase64,
-                    },
-                },
-            ]);
-            const rawText = result.response.text();
+            // Agnostic AI Call (Delegated to user implementation)
+            const rawText = await this.aiProvider(prompt, screenshotBase64);
             const cleanedText = cleanJsonResponse(rawText);
             try {
                 return JSON.parse(cleanedText);
             }
             catch (error) {
                 const message = error instanceof Error ? error.message : String(error);
-                throw new Error(`Failed to parse JSON from Gemini: ${message}`);
+                throw new Error(`Failed to parse JSON from the AI Provider: ${message} \nRaw Response: ${rawText}`);
             }
         }
         catch (error) {
