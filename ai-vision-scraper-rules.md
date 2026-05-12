@@ -1,72 +1,72 @@
-# 👁️🤖 AI Vision Scraper (ai-vision-scraper) — Mimari Anayasa ve Kullanım Kılavuzu
+# ????? AI Vision Scraper (ai-vision-scraper) � Architecture Rules & Autonomous Agent Guide
 
-Bu doküman, sistemin nasıl inşa edileceğini ve genişletileceğini belirleyen KESİN KURALLAR BÜTÜNÜDÜR. Sisteme müdahale edecek tüm yapay zeka ajanlarının ve mühendislerin, bu anayasadaki mimari kararlara harfiyen uyması **zorunludur**.
+This document is the DEFINITIVE SET OF RULES that determines how the system is built and extended. All AI agents and software engineers interacting with this system **must** strictly adhere to the architectural decisions outlined in this constitution.
 
 ---
 
-## 1. Temel Felsefe ve Paradigma Değişimi
-**Kural:** DOM Parsing Gelenekleri (Cheerio, Puppeteer XPath vs.) Kesinlikle Yasaktır.
-* **Sebep:** Geleneksel web kazıma yöntemleri; hedef sitelerin sürekli değişen CSS sınıfları (Tailwind vb.), dinamik React/Vue yapıları, bot korumaları (Cloudflare) ve DOM manipülasyonları karşısında sürekli kırılgandır ve sürdürülemez bir bakım borcu yaratır.
-* **Sonuç:** Temsili DOM parse etme kodları reddedilmiştir. Sadece `ai-vision-scraper` kütüphanesi kullanılacaktır. Algoritmalar sitenin arka plan koduna değil, fiziksel render edilen **görüntüsüne** odaklanmalıdır. Veri çıkarımı, kural bazlı seçiciler (selectors) ile değil İngilizce/Türkçe doğal dil algoritmaları üzerinden yapılmalıdır.
+## 1. Core Philosophy and Paradigm Shift
+**Rule:** Traditional DOM Parsing (Cheerio, Puppeteer XPath, etc.) is Strictly Prohibited.
+* **Reason:** Traditional web scraping methods are extremely fragile against constantly changing CSS classes (e.g., Tailwind), dynamic React/Vue structures, bot protections (Cloudflare), and DOM manipulations, resulting in unsustainable maintenance debt.
+* **Result:** Code that attempts to parse the underlying DOM is rejected. You MUST exclusively use the `ai-vision-scraper` core engine. The algorithms must focus on the physical rendered **visuals** of the page rather than the background source code. Data extraction should be performed via English/Turkish natural language instructions rather than rule-based selectors.
 
-## 2. Güvenlik ve Bağımlılık Enjeksiyonu (Dependency Injection)
-**Kural:** API Key'lerin Koda Gömülmesi (Hardcoding) Yasaktır.
-* **Sebep:** Sabitlenmiş anahtarlar, açık kaynak sızıntılarına ve cloud (AWS, Vercel vb.) dağıtımlarında projenin çökmesine neden olur.
-* **Sonuç:** Yapılandırma daima çevre değişkenlerinden (`process.env.GEMINI_API_KEY`) okunmalı veya sınıf (class) ayağa kaldırılırken constructor ile dışarıdan enjekte edilmelidir.
-* **Doğru Kullanım:**
+## 2. Security and Dependency Injection (DI)
+**Rule:** Hardcoding API Keys is Prohibited.
+* **Reason:** Hardcoded keys lead to open-source leaks and cause the project to crash in cloud deployments (AWS, Vercel, etc.).
+* **Result:** Configuration must always be read from environment variables (`process.env.GEMINI_API_KEY`) or injected from the outside via the constructor when instantiating the class.
+* **Proper Usage:**
   ```typescript
   import { VisionEngine } from "ai-vision-scraper";
   const apiKey = process.env.GEMINI_API_KEY;
-  const engine = new VisionEngine({ apiKey }); // Dependency Injection uygulanmıştır.
+  const engine = new VisionEngine({ apiKey }); // Dependency Injection applied.
   ```
 
-## 3. Yapay Zeka Halüsinasyonları ve Çıktı Dayatması
-**Kural:** `instruction` (talimat) parametresi "açık uçlu sohbete" izin veremez. Katı bir JSON şeması dayatılmalıdır.
-* **Sebep:** Büyük dil modelleri (LLM), çıktılarına `markdown` kod blokları, "İşte sonuçlarınız" gibi sohbet kelimeleri ekleyebilir. Bu durum uygulamanın JSON.parse() komutunda direkt Crash (Çökme) yemesine sebep olur.
-* **Sonuç:** Talimat yazılırken esneklik sıfır olmalı, alanlar (keys) net bir şekilde aktarılmalı ve kesin bir JSON iskeleti şart koşulmalıdır.
-* **Doğru Kullanım:** `"Find the laptop name and price. Return strictly a JSON object with keys 'name' (string) and 'price' (string). No markdown, no comments."`
+## 3. AI Hallucinations and Strict Output Enforcement
+**Rule:** The `instruction` parameter cannot allow "open-ended conversation". A strict JSON schema must be enforced.
+* **Reason:** Large Language Models (LLMs) might include `markdown` code blocks or conversational phrases like "Here are your results" in their output. This causes the application to crash immediately when calling `JSON.parse()`.
+* **Result:** Zero flexibility when writing instructions; keys must be clearly stated, and a strict JSON skeleton must be mandated.
+* **Proper Usage:** `"Find the laptop name and price. Return strictly a JSON object with keys 'name' (string) and 'price' (string). No markdown, no comments."`
 
-## 4. Hata Yönetimi ve Sistemin Hayatta Kalması (Resilience)
-**Kural:** Saf `extract()` çağrısı asla çıplak kullanılamaz; daima `try/catch` zırhı ile sarmalanacaktır.
-* **Sebep:** Hedef site erişilemez olabilir (DNS hatası), Playwright timeout (zaman aşımı) alabilir ya da hedeflenen ürün satıstan kaldırıldığı için sayfada olmayabilir (model null dönebilir). Yakalanmayan bu tip hatalar backend mimarisini komple çökertecektir.
-* **Sonuç:** Hata durumlarında uygulamanın çökmesi engellenmeli, sistem sessizce recover edebilecek veya fallback sunacak (örneğin `return null;` yapacak) şekilde boilerplate yapılandırılmalıdır.
-* **Doğru Kullanım:**
+## 4. Error Handling and System Resilience
+**Rule:** A raw `extract()` call can never be used naked; it must always be wrapped in a `try/catch` armor.
+* **Reason:** The target site might be inaccessible (DNS error), Playwright might hit a timeout, or the target product might have been removed (resulting in a null return). Uncaught errors like these will crash the entire backend architecture.
+* **Result:** Application crashes must be prevented on errors. The system should be able to recover silently or provide a fallback (e.g., returning `null`).
+* **Proper Usage:**
   ```typescript
   try {
       const result = await engine.extract(url, strictInstruction);
       return result;
   } catch (error) {
       console.error(`[VisionScraper] Extraction error for URL: ${url}`, error);
-      return null; // Sistemin ayakta kalması için.
+      return null; // To keep the system alive.
   }
   ```
 
-## 5. Dinamik Görüş Alanı Yönetimi (Viewport vs. FullPage)
-**Kural:** `fullPage` varsayılan olarak kapalı `false` kalmalı, yalnızca gerekli durumlarda maliyet hesabıyla `true` yapılmalıdır.
-* **Sebep:** Sayfanın sadece en üstünde (Hero Section) bulunan bir başlık (H1) veya fiyat verisi için kilometrelerce uzunluktaki tüm sayfayı render edip yapay zekaya göndermek devasa bir hız, kaynak ve token (para) israfıdır. Tam sayfa çekimler model limitlerini (Rate Limits) veya token kısıtlamalarını tetikleyebilir.
-* **Sonuç:**
-  * Eğer aranan nesne, sayfa yüklendiğinde görünen ilk perspektifte ise: `options: { fullPage: false }`
-  * Eğer bir tablo, yorum listesi veya sonsuz loding dışı geniş bir liste aranıyorsa: `options: { fullPage: true }` kullanılmalıdır.
+## 5. Dynamic Vision Area Management (Viewport vs. FullPage)
+**Rule:** `fullPage` should remain `false` by default and only be enabled as `true` with strategic cost considerations.
+* **Reason:** Rendering a mile-long page just to extract a Title (H1) or price from the Hero Section at the top is a massive waste of speed, resources, and tokens (money). Full-page captures can trigger model Rate Limits or token boundaries.
+* **Result:**
+  * If the target object is visible in the initial viewport upon load: `options: { fullPage: false }`
+  * If searching for a table, a list of comments, or a long non-infinite-loading list: `options: { fullPage: true }` should be used.
 
-## 6. Ajanlar İçin Örnek Referans Kod (Şablon)
-**Kural:** Aşağıdaki TypeScript şablonu, SDK'yı kullanacak diğer yapay zeka ajanları için "Standart Referans Şablon" olarak kabul edilmelidir. Yeni bir script/dosya yazacak olan ajanlar bu iskeleti örnek alacak ve yapıyı bozmayacaktır.
+## 6. Standard Reference Template for Agents
+**Rule:** The following TypeScript template is considered the "Standard Reference Template" for other AI agents using the SDK. Any agent writing a new script/file must use this skeleton as a reference and avoid breaking the structure.
 
 ```typescript
-import { VisionEngine } from 'ai-vision-scraper';
-import * as dotenv from 'dotenv';
+import { VisionEngine } from "ai-vision-scraper";
+import * as dotenv from "dotenv";
 
 dotenv.config();
 
 async function main() {
-    // 1. Dependency Injection ile Engine başlatma
+    // 1. Initialize Engine with Dependency Injection
     const engine = new VisionEngine({
-        apiKey: process.env.GEMINI_API_KEY // API Key koda gömülmedi
-        // Opsiyonel mimari ayarlar eklenebilir: { headless: false } vb.
+        apiKey: process.env.GEMINI_API_KEY // API Key is not hardcoded
+        // Optional architectural settings can be added: { headless: false }, etc.
     });
 
-    const targetUrl = 'https://books.toscrape.com/';
+    const targetUrl = "https://books.toscrape.com/";
 
-    // 2. Katı, Şeması Belirli, Yönlendirici Instruction (Talimat)
+    // 2. Strict, Schema-Defined, Guiding Instruction
     const instruction = `
     Analyze this page. Identify the first 3 book titles and their prices.
     Return strictly a JSON object with this exact structure, no markdown formatting:
@@ -77,16 +77,16 @@ async function main() {
     }
     `;
 
-    // 3. Try/Catch Zırhı ile Çağrı (FullPage / Viewport tercihi ile)
+    // 3. Try/Catch Armored Call (with FullPage / Viewport preference)
     try {
-        console.log(`[VisionScraper] ${targetUrl} adresine gidiliyor...`);
+        console.log(`[VisionScraper] Navigating to ${targetUrl}...`);
         const result = await engine.extract(targetUrl, instruction, { fullPage: false });
         
-        console.log('✅ İşlem Tamam. Çıktı:');
+        console.log("? Extraction Complete. Output:");
         console.log(JSON.stringify(result, null, 2));
     } catch (error) {
-        console.error('❌ Kazıma sırasında hata tespit edildi. Fallback uygulanıyor...', error);
-        // Sistemin çökmemesi için uygun bir dönüş yap veya hatayı logla
+        console.error("? Error detected during scraping. Fallback applied...", error);
+        // Provide a suitable return or log the error to prevent system crash
     }
 }
 
@@ -94,4 +94,4 @@ main();
 ```
 
 ---
-*Bu mimari kurallar ve şablonlar, projede sürdürülebilirlik, maliyet verimliliği ve stabiliteyi uzun vadeli garanti altına almak için yazılmıştır.*
+*These architectural rules and templates are written to ensure long-term sustainability, cost efficiency, and stability for the project.*
