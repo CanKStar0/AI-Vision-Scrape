@@ -1,4 +1,4 @@
-# ????? AI Vision Scraper (ai-vision-scraper) — Architecture Rules & Autonomous Agent Guide
+#  AI Vision Scraper (ai-vision-scraper)  Architecture Rules & Autonomous Agent Guide
 
 This document is the DEFINITIVE SET OF RULES that determines how the system is built and extended. All AI agents and software engineers interacting with this system **must** strictly adhere to the architectural decisions outlined in this constitution.
 
