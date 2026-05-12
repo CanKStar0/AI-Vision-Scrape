@@ -1,60 +1,68 @@
 <div align="center">
 
-# ????? VisionScrape (ai-vision-scraper)
-**DOM Parsing Dönemi Bitti. Web Sitelerini Kodundan Değil, GÖRÜNÜMÜNDEN Okuyan Yeni Nesil Yapay Zeka Kazıma Motoru!**
+# ğŸ‘ï¸ğŸ¤– VisionScrape (ai-vision-scraper)
 
-[![npm version](https://img.shields.io/npm/v/ai-vision-scraper.svg?style=flat-square)](https://www.npmjs.com/package/ai-vision-scraper)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+**DOM Parsing DÃ¶nemi Bitti. Web Sitelerini Kodundan DeÄŸil, GÃ–RÃœNÃœMÃœNDEN Okuyan Yeni Nesil Yapay Zeka KazÄ±ma Motoru!**
+
+[![npm version](https://img.shields.io/npm/v/ai-vision-scraper.svg?style=for-the-badge&color=blue)](https://www.npmjs.com/package/ai-vision-scraper)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/CanKStar0/VisionEngine/pulls)
 
 </div>
 
 ---
 
-## ?? Vizyonumuz: Neden VisionScrape?
+## ğŸš€ Vizyonumuz: Neden VisionScrape?
 
-Geleneksel web kazıma (web scraping) yöntemleri; sürekli değişen CSS sınıfları, karmaşık React/Vue DOM yapıları ve acımasız bot koruma sistemleri (Cloudflare vs.) yüzünden artık **sürdürülemez ve kırılgan** bir hale geldi. Bir site arayüzünü güncellediğinde, yazdığınız yüzlerce satırlık XPath ve Cheerio kodları bir saniyede çöpe gider.
+Geleneksel web kazÄ±ma (web scraping) yÃ¶ntemleri; sÃ¼rekli deÄŸiÅŸen CSS sÄ±nÄ±flarÄ± (Tailwind vb.), karmaÅŸÄ±k React/Vue DOM yapÄ±larÄ± ve acÄ±masÄ±z bot koruma sistemleri (Cloudflare vs.) yÃ¼zÃ¼nden artÄ±k **sÃ¼rdÃ¼rÃ¼lemez ve kÄ±rÄ±lgan** bir hale geldi. Bir site arayÃ¼zÃ¼nÃ¼ gÃ¼ncellediÄŸinde, bÃ¼yÃ¼k emeklerle yazdÄ±ÄŸÄ±nÄ±z yÃ¼zlerce satÄ±rlÄ±k XPath ve Cheerio kodlarÄ± bir saniyede Ã§Ã¶pe gider.
 
-**VisionScrape bu kaosa son veriyor!**
-Biz sistemi "kodlara" bakacak şekilde değil, tıpkı **gerçek bir insan gibi ekrana bakacak** şekilde tasarladık. Hedef url`yi verirsiniz, *doğal dille (İngilizce/Türkçe)* ne istediğinizi söylersiniz; gerisini arka planda VisionScrape ve **Seçtiğiniz Yapay Zeka (OpenAI, Gemini, Anthropic vs.)** halleder.
+> **VisionScrape bu kaosa son veriyor!**
 
-## ? Öne Çıkan Özellikler
-
-- **?? Özgür AI Mimarisi:** Sisteme hiçbir yapay zeka sağlayıcısı (Vendor Lock-in) KİLİTLİ DEĞİLDİR! İster OpenAI (ChatGPT), ister Google Gemini, ister Anthropic (Claude) kullanın.
-- **?? XPath ve CSS Selector Yok:** Veriyi HTML tag`lerinden değil, sayfanın ekran görüntüsünün görsel analizinden (Vision) çeker. Site tasarımı değişse bile kodunuz bozulmaz!
-- **?? Akıllı Şema Dayatması (Strict JSON):** Yapay zekanın saçmalamasını engelleyen özel mimarimiz sayesinde, talimatlarınız her zaman %100 parse edilebilir, katı bir `JSON` formatında döner.
-- **??? Bot Korumalarını Aşar:** Playwright Stealth eklentisi sayesinde gerçek insan hareketlerini simüle eder, bloklanma riskini minimuma indirir.
+Biz sistemi "kodlara" bakacak ÅŸekilde deÄŸil, tÄ±pkÄ± **gerÃ§ek bir insan gibi ekrana bakacak** ÅŸekilde tasarladÄ±k. Hedef URL'yi verirsiniz, *doÄŸal dille (Ä°ngilizce/TÃ¼rkÃ§e)* ne istediÄŸinizi sÃ¶ylersiniz; gerisini arka planda VisionScrape'in geliÅŸmiÅŸ Playwright tarayÄ±cÄ± altyapÄ±sÄ± ve **Sizin SeÃ§tiÄŸiniz Yapay Zeka (OpenAI, Gemini, Anthropic vs.)** halleder.
 
 ---
 
-## ?? Kurulum ve Ayarlama
+## âœ¨ Ã–ne Ã‡Ä±kan Ã–zellikler
 
-Projeye saniyeler içinde dahil edin:
+- **ğŸ§  Ã–zgÃ¼r AI Mimarisi (Agnostic):** Sisteme hiÃ§bir yapay zeka saÄŸlayÄ±cÄ±sÄ± (Vendor Lock-in) KÄ°LÄ°TLÄ° DEÄÄ°LDÄ°R! Ä°ster OpenAI (ChatGPT), ister Google Gemini, ister Anthropic (Claude) kullanÄ±n. Motor sadece aracÄ±lÄ±k yapar.
+- **ğŸš« XPath ve CSS Selector Yok:** Veriyi HTML etiketlerinden deÄŸil, sayfanÄ±n ekran gÃ¶rÃ¼ntÃ¼sÃ¼nÃ¼n gÃ¶rsel analizinden (Vision) Ã§eker. Site tasarÄ±mÄ± baÅŸtan aÅŸaÄŸÄ± deÄŸiÅŸse bile kodunuz tÄ±kÄ±r tÄ±kÄ±r Ã§alÄ±ÅŸÄ±r!
+- **ğŸ¤– AkÄ±llÄ± Åema DayatmasÄ± (Strict JSON):** Yapay zekanÄ±n halÃ¼sinasyonlar gÃ¶rÃ¼p saÃ§malamasÄ±nÄ± veya sohbet etmesini engelleyen Ã¶zel mimarimiz sayesinde, talimatlarÄ±nÄ±z her zaman %100 parse edilebilir, katÄ± bir `JSON` formatÄ±nda dÃ¶ner.
+- **ğŸ›¡ï¸ Bot KorumalarÄ±nÄ± AÅŸar:** Playwright Stealth eklentisi sayesinde gerÃ§ek insan navigasyonunu simÃ¼le eder (WebDriver sancaÄŸÄ±nÄ± siler), bloklanma riskini minimuma indirir.
+
+---
+
+## ğŸ“¦ Kurulum ve Ayarlama
+
+Projeye saniyeler iÃ§inde dahil edin:
 
 ```bash
 npm install ai-vision-scraper
 ```
 
-Sistem tamamen "Agnostic" (bağımsız) olarak tasarlanmıştır. Bu yüzden `ai-vision-scraper` kütüphanesi ağır AI eklentilerini cihazınıza yüklemez. Kendi favori AI kütüphanenizi (örn: `@google/generative-ai` veya `openai`) ayrıca kurup motora enjekte edersiniz.
+Sistem tamamen "Agnostic" (baÄŸÄ±msÄ±z) olarak tasarlanmÄ±ÅŸtÄ±r. Bu yÃ¼zden `ai-vision-scraper` kÃ¼tÃ¼phanesi aÄŸÄ±r AI eklentilerini cihazÄ±nÄ±za zorla yÃ¼klemez. Kendi favori AI kÃ¼tÃ¼phanenizi (Ã¶rn: `@google/generative-ai` veya `openai`) projeye dahil edip motora enjekte edersiniz.
 
 ---
 
-## ?? Hızlı Başlangıç (Google Gemini Örneği)
+## ğŸ’» HÄ±zlÄ± BaÅŸlangÄ±Ã§ (Google Gemini Ã–rneÄŸi)
 
+Tavsiye EttiÄŸimiz Yapay Zeka Gemini 1.5/2.5 Flash'tÄ±r, kurmak iÃ§in:
 ```bash
 npm install @google/generative-ai
 ```
+
+Projeye entegre edip veriyi Ã§ekmek ÅŸu kadar kolay:
 
 ```typescript
 import { VisionEngine } from "ai-vision-scraper";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+// 1. Kendi anahtarÄ±nÄ±zla Gemini'yi baÅŸlatÄ±n
 const genAI = new GoogleGenerativeAI("SENIN_GEMINI_API_ANAHTARIN");
 
 async function main() {
-    // 1. Motoru "Sizin Seçtiğiniz AI" ile Başlatın
+    // 2. Motoru kullanmak istediÄŸimiz Yapay Zeka ile (Gemini) ayaÄŸa kaldÄ±rÄ±yoruz
     const engine = new VisionEngine({
         aiProvider: async (prompt, imageBase64) => {
-            // Sistemin fırlattığı prompt ve kestiği ekran görüntüsünü Gemini`ye yolluyoruz.
             const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
             const result = await model.generateContent([
                 { text: prompt },
@@ -66,15 +74,19 @@ async function main() {
 
     const targetUrl = "https://books.toscrape.com/";
 
-    // 2. Ne İstediğinizi Söyleyin
-    const instruction = "Sayfada gördüğün ilk 3 kitabın adını ve fiyatını bul ve JSON formatında dön.";
+    // 3. Ne Ä°stediÄŸinizi SÃ¶yleyin (DoÄŸal dil ile yÃ¶nlendirme)
+    const instruction = "Sayfada gÃ¶rdÃ¼ÄŸÃ¼n ilk 3 kitabÄ±n adÄ±nÄ± ve fiyatÄ±nÄ± bul ve dÃ¼rÃ¼stÃ§e JSON formatÄ±nda dÃ¶n.";
 
     try {
-        console.log(`?? ${targetUrl} adresine uçuluyor...`);
+        console.log(`ğŸš€ ${targetUrl} adresine uÃ§uluyor...`);
+        
+        // 4. Extraction Ä°ÅŸlemi - Hedef siteye baÄŸlan ve analiz et!
         const result = await engine.extract(targetUrl, instruction, { fullPage: false });
-        console.log("? İşlem Başarılı! Veri:", JSON.stringify(result, null, 2));
+        
+        console.log("âœ… Ä°ÅŸlem BaÅŸarÄ±lÄ±! Yapay ZekanÄ±n Ã‡Ä±kardÄ±ÄŸÄ± Veri:");
+        console.log(JSON.stringify(result, null, 2));
     } catch (error) {
-        console.error("? Hata:", error);
+        console.error("âŒ Hata OluÅŸtu:", error);
     }
 }
 main();
@@ -82,8 +94,9 @@ main();
 
 ---
 
-## ?? Hızlı Başlangıç (OpenAI GPT-4o Örneği)
+## ğŸ’» Harekete GeÃ§ (OpenAI GPT-4o Ã–rneÄŸi)
 
+Ben ChatGPT'den vazgeÃ§mem diyenlerdenseniz:
 ```bash
 npm install openai
 ```
@@ -113,14 +126,36 @@ async function main() {
         }
     });
 
-    const result = await engine.extract("https://news.ycombinator.com/", "Bana ilk 5 haberin başlığını dön.");
-    console.log(result);
+    console.log("ğŸš€ Hacker News taranÄ±yor...");
+    // Sadece bir cÃ¼mlelik komut!
+    const result = await engine.extract("https://news.ycombinator.com/", "Bana ilk 5 haberin baÅŸlÄ±ÄŸÄ±nÄ± dÃ¶n.");
+    
+    console.log("Haberler:", result);
 }
 main();
 ```
 
 ---
 
-## ?? Bize Katıl, Yıldız Ver ve Destek Ol! ??
+## ğŸ’¡ SÄ±nÄ±rlarÄ± Zorlayacak Proje Fikirleri
 
-Bu proje, açık kaynak topluluğunun gücü ve inovasyona inancın bir eseri. Yıllardır süregelen "kod kazıyarak" veri bulma ızdırabına son veren, geleceğin "Görsel Zeka" odaklı sisteminin temellerini inşa ediyoruz. Lütfen sağ üstten destek olmak için bize bir YILDIZ verin.
+Bu motor sadece basit bir veri Ã§ekici deÄŸil, dijital dÃ¼nyayÄ± sizin adÄ±nÄ±za 7/24 gÃ¶rsel olarak gÃ¶zetleyen otonom bir gÃ¶zdÃ¼r:
+
+1. ğŸ›’ **E-Ticaret Ä°stihbarat AjanÄ±:** Rakiplerinizin sayfalarÄ±ndaki fiyatlarÄ± saatlik olarak arka planda dolaÅŸÄ±p izleyen, olaÄŸandÄ±ÅŸÄ± bir indirim yapÄ±lmÄ±ÅŸsa size Telegram veya Discord Ã¼zerinden saniyeler iÃ§inde "SaldÄ±r!" mesajÄ± atan otonom bir sistem.
+2. ğŸ“ˆ **Kripto & Borsa Dinamik Analizi:** Ã‡Ä±lgÄ±n grafiklerin ve karmaÅŸÄ±k canvas elementlerinin yer aldÄ±ÄŸÄ±, normal botlarÄ±n hiÃ§bir zaman okuyamayacaÄŸÄ± borsa sitelerinde sadece **"Grafikteki gÃ¼ncel formasyon deÄŸerini ve rengi al"** diyerek canlÄ± veri akÄ±ÅŸÄ± yakalamak.
+3. ğŸ  **Otonom Gayrimenkul & AraÃ§ AvcÄ±sÄ±:** Sahibinden gibi platformlarda saatlerce gezmek yerine, belirlediÄŸiniz filtrelerde yeni bir ev/araba ilanÄ± dÃ¼ÅŸtÃ¼ÄŸÃ¼nde arabanÄ±n plakasÄ±nÄ±, fotoÄŸrafÄ±nÄ± ve net bilgilerini okuyan sÃ¼per hÄ±zlÄ± bir bot.
+
+---
+
+## ğŸ¤ Bize KatÄ±l, YÄ±ldÄ±z Ver ve Destek Ol! ğŸŒŸ
+
+Bu proje, aÃ§Ä±k kaynak topluluÄŸunun gÃ¼cÃ¼ ve inovasyona inancÄ±n bir eseri olarak kuruldu. YÄ±llardÄ±r sÃ¼regelen "kod kazÄ±yarak" veya "XPath avlayarak" veri bulma Ä±zdÄ±rabÄ±na son veren, geleceÄŸin **"GÃ¶rsel Zeka" (Vision)** odaklÄ± sisteminin temellerini inÅŸa ediyoruz.
+
+**NasÄ±l Destek Olabilirsin?**
+- **â­ YÄ±ldÄ±za TÄ±kla:** LÃ¼tfen en yukarÄ±daki **Star** butonuna basarak projenin dÃ¼nyanÄ±n her yerindeki geliÅŸtiriciler tarafÄ±ndan gÃ¶rÃ¼lmesine ve en tepeye Ã§Ä±kmasÄ±na en bÃ¼yÃ¼k katkÄ±yÄ± hemen ÅŸimdi saÄŸla. Ã‡Ã¼nkÃ¼ sizin yÄ±ldÄ±zlarÄ±nÄ±z bu projenin yakÄ±tÄ±!
+- **ğŸ› ï¸ Forkla ve KatkÄ±da Bulun:** Projeyi iyileÅŸtir veya GitHub Issues kÄ±smÄ±nda vizyoner fikirlerini paylaÅŸ. Anthropic veya Llama gibi yeni yapay zeka modelleriyle test edip PR atmaktan aska Ã§ekinme.
+- **ğŸ“£ AteÅŸi Yay:** KurduÄŸun Ã§Ä±lgÄ±n otonom sistemleri X (Twitter), LinkedIn, veya Reddit gibi platformlarda etiketleyerek paylaÅŸ!
+
+BirkaÃ§ kod satÄ±rÄ± ile internetin bÃ¼tÃ¼n algÄ±sÄ±nÄ± alt Ã¼st ediyor, dijital sÄ±nÄ±rlarÄ± yÄ±kÄ±yorsun...
+MasaÃ¼stÃ¼nÃ¼n baÅŸÄ±na geÃ§. Limit sadece sensin...
+**Hemen fÄ±rlatmaya hazÄ±rlan! ğŸš€ğŸ”¥**
