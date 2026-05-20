@@ -1,6 +1,6 @@
 {
   "name": "ai-vision-scraper",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "VisionScrape Core Engine — Headless browser automation & AI-powered data extraction API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,7 +25,7 @@
     "vision"
   ],
   "author": "",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
     "cheerio": "^1.2.0",
     "cors": "^2.8.5",
