@@ -1,13 +1,21 @@
 /**
- * scrapeRoutes — Core scraping endpoints
+ * scrapeRoutes — Core scraping endpoints (Anti-Detection Enhanced)
  *
  * POST /api/fetch-site
- *   Body: { url: string }
+ *   Body: { url: string, stealth?: boolean, lightBehavior?: boolean }
  *   Returns: { success, screenshot (base64), dom (string), pageTitle }
+ *
+ * ANTI-DETECTION FLOW:
+ *   1. Create stealth context (fingerprint forged, rate-limited)
+ *   2. Navigate with anti-detection protections
+ *   3. Simulate human behavior (scroll, mouse, idle)
+ *   4. Capture screenshot + DOM
  */
 
 import { Router } from "express";
 import browserManager from "../services/browserManager.js";
+import { simulateHumanBehavior } from "../services/humanBehavior.js";
+import { getRateLimitStatus } from "../services/fingerprintForge.js";
 
 const router = Router();
 
@@ -27,7 +35,7 @@ function isValidUrl(urlString) {
 
 // ─── POST /api/fetch-site ───────────────────────────────────────────────────────
 router.post("/fetch-site", async (req, res) => {
-  const { url } = req.body;
+  const { url, stealth = true, lightBehavior = false } = req.body;
 
   // ── Input Validation ──
   if (!url || typeof url !== "string") {
@@ -52,11 +60,30 @@ router.post("/fetch-site", async (req, res) => {
     });
   }
 
+  // ── Rate Limit Pre-Check ──
+  if (stealth) {
+    const rateLimitStatus = getRateLimitStatus(url);
+    if (rateLimitStatus.isLimited) {
+      return res.status(429).json({
+        success: false,
+        error: `Rate limit exceeded for "${rateLimitStatus.domain}". Please slow down.`,
+        rateLimitStatus,
+      });
+    }
+  }
+
   let context = null;
 
   try {
-    // 1. Create an isolated context + page
-    context = await browserManager.createContext();
+    // 1. Create context (stealth or legacy based on flag)
+    if (stealth) {
+      context = await browserManager.createStealthContext(url);
+      console.log(`[Scrape] 🛡️  Stealth mode enabled for: ${url}`);
+    } else {
+      context = await browserManager.createContext();
+      console.log(`[Scrape] 🌐 Legacy mode for: ${url}`);
+    }
+
     const page = await context.newPage();
 
     console.log(`[Scrape] 🌐 Navigating to: ${url}`);
@@ -67,20 +94,25 @@ router.post("/fetch-site", async (req, res) => {
       timeout: 30_000,
     });
 
-    // 3. Capture full-page screenshot as base64
+    // 3. Human behavior simulation (only in stealth mode)
+    if (stealth) {
+      await simulateHumanBehavior(page, { light: lightBehavior });
+    }
+
+    // 4. Capture full-page screenshot as base64
     const screenshotBuffer = await page.screenshot({
       fullPage: true,
       type: "png",
     });
     const screenshotBase64 = screenshotBuffer.toString("base64");
 
-    // 4. Extract DOM innerHTML
+    // 5. Extract DOM innerHTML
     const dom = await page.evaluate(() => document.body.innerHTML);
 
-    // 5. Grab page title for metadata
+    // 6. Grab page title for metadata
     const pageTitle = await page.title();
 
-    // 6. Get page dimensions (useful for coordinate mapping later)
+    // 7. Get page dimensions (useful for coordinate mapping later)
     const dimensions = await page.evaluate(() => ({
       scrollWidth: document.body.scrollWidth,
       scrollHeight: document.body.scrollHeight,
@@ -96,9 +128,18 @@ router.post("/fetch-site", async (req, res) => {
       dom,
       pageTitle,
       dimensions,
+      stealthMode: stealth,
     });
   } catch (error) {
     console.error(`[Scrape] ❌ Error scraping "${url}":`, error.message);
+
+    // Rate limit error
+    if (error.message.includes("Rate limit") || error.message.includes("Too fast")) {
+      return res.status(429).json({
+        success: false,
+        error: error.message,
+      });
+    }
 
     // Differentiate timeout from other errors
     if (error.message.includes("Timeout") || error.message.includes("timeout")) {
@@ -123,4 +164,3 @@ router.post("/fetch-site", async (req, res) => {
 });
 
 export default router;
-

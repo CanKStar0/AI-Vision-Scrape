@@ -1,6 +1,9 @@
 import { chromium } from "playwright-extra";
 import stealth from "puppeteer-extra-plugin-stealth";
 import dotenv from "dotenv";
+import { getProfileForSite, buildInitScript } from "./services/fingerprintForge.js";
+import { interceptRequests } from "./services/networkCloak.js";
+import { simulateHumanBehavior } from "./services/humanBehavior.js";
 
 chromium.use(stealth());
 
@@ -47,6 +50,14 @@ export interface VisionEngineOptions {
   aiProvider: AIProviderCallback;
 }
 
+export interface ExtractOptions {
+  fullPage?: boolean;
+  /** Enable anti-detection stealth mode (default: true) */
+  stealth?: boolean;
+  /** Use light human behavior simulation for faster extraction (default: false) */
+  lightBehavior?: boolean;
+}
+
 export class VisionEngine {
   private aiProvider: AIProviderCallback;
 
@@ -73,7 +84,11 @@ export class VisionEngine {
     ].join("\n");
   }
 
-  public async extract(url: string, instruction: string, options: { fullPage?: boolean } = { fullPage: false }): Promise<any> {
+  public async extract(
+    url: string,
+    instruction: string,
+    options: ExtractOptions = { fullPage: false, stealth: true, lightBehavior: false }
+  ): Promise<any> {
     if (!url || typeof url !== "string") {
       throw new Error("A valid URL string is required.");
     }
@@ -82,29 +97,92 @@ export class VisionEngine {
       throw new Error("A valid instruction string is required.");
     }
 
+    const useStealth = options.stealth !== false; // Default: true
+    const lightBehavior = options.lightBehavior || false;
+
     let browser: Awaited<ReturnType<typeof chromium.launch>> | null = null;
 
     try {
+      // ─── Launch with anti-detection arguments ───────────────────────────
       browser = await chromium.launch({
         headless: true,
-        args: ["--disable-blink-features=AutomationControlled"],
+        args: [
+          "--disable-blink-features=AutomationControlled",
+          "--disable-features=IsolateOrigins,site-per-process",
+          "--disable-infobars",
+          "--disable-extensions",
+          "--disable-background-networking",
+          "--disable-default-apps",
+          "--no-first-run",
+          "--no-sandbox",
+          "--window-size=1920,1080",
+          "--metrics-recording-only",
+          "--no-default-browser-check",
+        ],
+        ignoreDefaultArgs: ["--enable-automation"],
       });
-      const context = await browser.newContext({
-        userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+
+      // ─── Context setup with fingerprint forging ─────────────────────────
+      let contextOptions: any = {
         viewport: { width: 1920, height: 1080 },
         locale: "en-US",
         timezoneId: "Europe/Istanbul",
-      });
-      const page = await context.newPage();
-      
-      // Remove Navigator.webdriver for escaping simple bot protections
-      await page.addInitScript(() => {
-        Object.defineProperty(navigator, "webdriver", { get: () => undefined });
-      });
+      };
 
+      let initScript = "";
+
+      if (useStealth) {
+        try {
+          const { profile } = getProfileForSite(url);
+          contextOptions = {
+            viewport: profile.viewport,
+            userAgent: profile.userAgent,
+            locale: profile.locale,
+            timezoneId: profile.timezoneId,
+            colorScheme: Math.random() > 0.5 ? "light" : "dark",
+          };
+          initScript = buildInitScript(profile);
+          console.log(`[VisionEngine] 🎭 Stealth mode — Profile: ${profile.id}`);
+        } catch (error: any) {
+          // Rate limit or other fingerprint error — fall back to basic context
+          if (error.message.includes("Rate limit") || error.message.includes("Too fast")) {
+            throw error; // Propagate rate limit errors
+          }
+          console.warn(`[VisionEngine] ⚠️ Fingerprint forge failed, using defaults: ${error.message}`);
+          contextOptions.userAgent =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
+        }
+      } else {
+        contextOptions.userAgent =
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+      }
+
+      const context = await browser.newContext(contextOptions);
+
+      // Inject init scripts
+      if (useStealth && initScript) {
+        await context.addInitScript(initScript);
+        // Also intercept requests for Chrome-identical headers
+        await interceptRequests(context);
+      } else {
+        // Basic webdriver override
+        await context.addInitScript(() => {
+          Object.defineProperty(navigator, "webdriver", { get: () => undefined });
+        });
+      }
+
+      const page = await context.newPage();
+
+      // ─── Navigate ───────────────────────────────────────────────────────
       await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
       await page.waitForTimeout(3000);
 
+      // ─── Human behavior simulation ─────────────────────────────────────
+      if (useStealth) {
+        await simulateHumanBehavior(page, { light: lightBehavior });
+      }
+
+      // ─── Screenshot ────────────────────────────────────────────────────
       const screenshotBuffer = await page.screenshot({
         fullPage: options.fullPage,
       });

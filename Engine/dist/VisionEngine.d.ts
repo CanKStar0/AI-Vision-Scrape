@@ -11,12 +11,17 @@ export interface VisionEngineOptions {
      */
     aiProvider: AIProviderCallback;
 }
+export interface ExtractOptions {
+    fullPage?: boolean;
+    /** Enable anti-detection stealth mode (default: true) */
+    stealth?: boolean;
+    /** Use light human behavior simulation for faster extraction (default: false) */
+    lightBehavior?: boolean;
+}
 export declare class VisionEngine {
     private aiProvider;
     constructor(options: VisionEngineOptions);
     private buildPrompt;
-    extract(url: string, instruction: string, options?: {
-        fullPage?: boolean;
-    }): Promise<any>;
+    extract(url: string, instruction: string, options?: ExtractOptions): Promise<any>;
 }
 export default VisionEngine;
