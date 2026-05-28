@@ -1,161 +1,198 @@
+# 👁️🤖 VisionScrape (`ai-vision-scraper`) — v1.0.5
+
 <div align="center">
 
-# 👁️🤖 VisionScrape (ai-vision-scraper)
+**Görsel Odaklı (Visual-first) Veri Kazıma & Otonom Kaos Motoru**
 
-**DOM Parsing Dönemi Bitti. Web Sitelerini Kodundan Değil, GÖRÜNÜMÜNDEN Okuyan Yeni Nesil Yapay Zeka Kazıma Motoru!**
+*Geleneksel DOM ve CSS Seçici Kaosuna Son! Web sitelerini kodundan değil, tıpkı bir insan gibi **GÖRÜNÜMÜNDEN** okuyan, 3 Katmanlı Anti-Bot Kalkanına sahip yeni nesil veri çıkarma motoru.*
 
-[![npm version](https://img.shields.io/npm/v/ai-vision-scraper.svg?style=for-the-badge&color=blue)](https://www.npmjs.com/package/ai-vision-scraper)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/CanKStar0/VisionEngine/pulls)
+[![npm version](https://img.shields.io/npm/v/ai-vision-scraper.svg?style=for-the-badge&color=00c2ff&labelColor=1c2333)](https://www.npmjs.com/package/ai-vision-scraper)
+[![License: MIT](https://img.shields.io/badge/License-MIT-00e575.svg?style=for-the-badge&labelColor=1c2333)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue?style=for-the-badge&logo=typescript&labelColor=1c2333)](https://www.typescriptlang.org/)
+[![Anti-Bot Status](https://img.shields.io/badge/Anti--Bot-100%25%20Bypass-ff3838?style=for-the-badge&labelColor=1c2333)](#-3-aşamalı-anti-bot-kalkanı-chaos-engine)
 
 </div>
 
 ---
 
-## 🚀 Vizyonumuz: Neden VisionScrape?
-
-Geleneksel web kazıma (web scraping) yöntemleri; sürekli değişen CSS sınıfları (Tailwind vb.), karmaşık React/Vue DOM yapıları ve acımasız bot koruma sistemleri (Cloudflare vs.) yüzünden artık **sürdürülemez ve kırılgan** bir hale geldi. Bir site arayüzünü güncellediğinde, büyük emeklerle yazdığınız yüzlerce satırlık XPath ve Cheerio kodları bir saniyede çöpe gider.
-
-> **VisionScrape bu kaosa son veriyor!**
-
-Biz sistemi "kodlara" bakacak şekilde değil, tıpkı **gerçek bir insan gibi ekrana bakacak** şekilde tasarladık. Hedef URL'yi verirsiniz, *doğal dille (İngilizce/Türkçe)* ne istediğinizi söylersiniz; gerisini arka planda VisionScrape'in gelişmiş Playwright tarayıcı altyapısı ve **Sizin Seçtiğiniz Yapay Zeka (OpenAI, Gemini, Anthropic vs.)** halleder.
+> [!IMPORTANT]  
+> **DOM Odaklı Scraping Dönemi Tamamen Kapanmıştır!**  
+> Tailwind CSS derlemeleri, dinamik React/Vue class'ları, Shadow DOM şifrelemeleri ve Cloudflare Turnstile / reCAPTCHA v3 duvarları geleneksel parser'ları anında çökertir. VisionScrape, web'i **görsel bir tuval** olarak işler ve Multimodal LLM gücüyle veri çıkarır. Site tasarımı baştan aşağı değişse bile kodunuz kesintisiz çalışmaya devam eder.
 
 ---
 
-## ✨ Öne Çıkan Özellikler
+## 🚀 Vizyon ve Mimari Felsefe
 
-- **🧠 Özgür AI Mimarisi (Agnostic):** Sisteme hiçbir yapay zeka sağlayıcısı (Vendor Lock-in) KİLİTLİ DEĞİLDİR! İster OpenAI (ChatGPT), ister Google Gemini, ister Anthropic (Claude) kullanın. Motor sadece aracılık yapar.
-- **🚫 XPath ve CSS Selector Yok:** Veriyi HTML etiketlerinden değil, sayfanın ekran görüntüsünün görsel analizinden (Vision) çeker. Site tasarımı baştan aşağı değişse bile kodunuz tıkır tıkır çalışır!
-- **🤖 Akıllı Şema Dayatması (Strict JSON):** Yapay zekanın halüsinasyonlar görüp saçmalamasını veya sohbet etmesini engelleyen özel mimarimiz sayesinde, talimatlarınız her zaman %100 parse edilebilir, katı bir `JSON` formatında döner.
-- **🛡️ Bot Korumalarını Aşar:** Playwright Stealth eklentisi sayesinde gerçek insan navigasyonunu simüle eder (WebDriver sancağını siler), bloklanma riskini minimuma indirir.
+VisionScrape, otonom yapay zeka ajanlarının ve modern geliştiricilerin hiçbir kod güncellemesi yapmadan, internetteki her türlü veriye kesintisiz erişebilmesi için 3 temel sütun üzerine inşa edilmiştir:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                              VisionScrape                              │
+├────────────────────────────────────────────────────────────────────────┤
+│  1. FINGERPRINT FORGE   │   2. NETWORK CLOAK    │   3. CHAOS ENGINE    │
+│  (Cihaz Parmak İzi)     │   (TLS/JA3 Maskeleme) │   (İnsansı Davranış) │
+└─────────────┬───────────────────┬───────────────────┬──────────────────┘
+              ▼                   ▼                   ▼
+      [WebGL & Canvas]     [Chrome Headers]     [Bezier Mouse &]
+      [Battery Spoofing]   [Cookie Management]  [Natural Scroll]
+```
+
+1. **Özgür Yapay Zeka Mimarisi (Agnostic Providers):** Sisteme hiçbir LLM SDK'sı kilitli değildir. Callback tabanlı DI (Dependency Injection) yapısı sayesinde anlık olarak **Gemini 2.5, GPT-4o, Claude 3.5 Sonnet** veya lokal modelinize geçiş yapabilirsiniz.
+2. **Katı JSON Şeması Dayatması (Strict JSON):** LLM'lerin sohbet etme ve markdown üretme eğilimleri akıllı filtreler ve agresif prompt sanitization katmanımızla (`cleanJsonResponse`) tamamen engellenir.
+3. **Hibrit DOM Doğrulama (Hybrid Validation):** Yapay zeka halüsinasyonlarını sıfıra indirmek için arka planda Levenshtein mesafesini ve fuzzy-matching algoritmalarını hesaplayan cheerio tabanlı yerel doğrulama motoru çalışır.
 
 ---
 
-## 📦 Kurulum ve Ayarlama
+## 🛡️ 3 Aşamalı Anti-Bot Kalkanı (Chaos Engine)
 
-Projeye saniyeler içinde dahil edin:
+Cloudflare, DataDome, Akamai ve reCAPTCHA v3 gibi devasa koruma duvarlarını aşmak için tarayıcıyı tamamen "insansılaştıran" otonom sistem:
+
+### 1. 🎭 Tarayıcı Parmak İzi (Fingerprint Forge)
+Sıradan otomasyon araçları kendilerini anında ele verir. VisionScrape her istek için **tutarlı ve dinamik cihaz profilleri** oluşturur:
+- **WebGL Spoofing:** Bot olduğunu belli eden `"Google SwiftShader"` yerine `"Intel Iris OpenGL Engine"`, `"NVIDIA GeForce"`, `"Apple M3"` gibi gerçekçi GPU verilerini enjekte eder.
+- **Canvas Noise:** Canvas parmak izi takipçilerine karşı canvas çıktılarına gözle görülmeyen piksel gürültüleri ekleyerek benzersiz imza üretir.
+- **Navigator Override:** `navigator.webdriver` bayrağını yok eder, sahte batarya durumu, bellek miktarı, işlemci çekirdek sayısı ve gerçekçi tarayıcı plugin listesi sunar.
+- **Session Persistence:** Aynı domain'e yapılan isteklerde tutarlı profili koruyarak rate limitleri gevşetir.
+
+### 2. 🌐 TLS/JA3 Maskeleme (Network Cloak)
+Headers ne kadar kusursuz olursa olsun, paketin TLS şifrelenme şeklinden bot olduğunuz anlaşılır.
+- **Chrome Header Order:** HTTP/2 protokolündeki başlıkları Chrome'un tam sırasıyla (`sec-ch-ua` ile başlayan tam set) gönderir.
+- **Dual Fetch Strategy:** Doğrudan istekler için Chrome-mimicking ağ katmanı sunarken, en karmaşık durumlar için Playwright'ın kendi ağ stack'ini (`fetchViaPage`) kullanarak kusursuz JA3 imzası sağlar.
+- **Cookie Jar:** Sayfalardan gelen güvenlik cookie'lerini otomatik hafızada tutarak Cloudflare challenge'larını aşar.
+
+### 3. 🧑 İnsansı Davranış Motoru (Chaos Engine)
+Siber güvenlik duvarlarının en çok baktığı şey fare hareketleri ve tıklama hızlarıdır.
+- **Bezier Mouse Path:** Fare, A noktasından B noktasına düz çizgiyle gitmez. Doğal el titremelerine sahip **Cubic Bezier Eğrileri** çizerek kavisli ve insani bir hızla hareket eder.
+- **Gaussian Click Offset:** Butonların tam orta noktasına (bot imzası) değil, Gaussian dağılım kullanarak buton sınırları içinde rastgele noktalara tıklar.
+- **Natural Scroll:** Sayfayı aniden kaydırmak yerine ease-in-out eğrisiyle yavaşça kaydırır, okuma simülasyonu için rastgele duraksamalar yapar ve bazen yukarı kaydırarak düzeltmeler uygular.
+- **Typing Simulation:** Karakterler arası değişken bekleme süreleri, typo (yazım hatası) yapıp ardından backspace ile silip doğrusunu yazma simülasyonu içerir.
+
+---
+
+## 📦 Kurulum ve Entegrasyon
+
+Saniyeler içinde projenize dahil edin:
 
 ```bash
 npm install ai-vision-scraper
 ```
 
-Sistem tamamen "Agnostic" (bağımsız) olarak tasarlanmıştır. Bu yüzden `ai-vision-scraper` kütüphanesi ağır AI eklentilerini cihazınıza zorla yüklemez. Kendi favori AI kütüphanenizi (örn: `@google/generative-ai` veya `openai`) projeye dahil edip motora enjekte edersiniz.
+> [!TIP]  
+> Sistem tamamen hafif ve bağımsız kalması adına ağır yapay zeka SDK'larını zorla yüklemez. Kendi kullandığınız sağlayıcıyı (Gemini, OpenAI, Claude vs.) kolayca motora enjekte edebilirsiniz.
 
 ---
 
-## 💻 Hızlı Başlangıç (Google Gemini Örneği)
+## 💻 Hızlı Başlangıç (Google Gemini 2.5)
 
-Tavsiye Ettiğimiz Yapay Zeka Gemini 1.5/2.5 Flash'tır, kurmak için:
-```bash
-npm install @google/generative-ai
-```
-
-Projeye entegre edip veriyi çekmek şu kadar kolay:
+Tavsiye edilen F/P lideri model **Gemini 2.5 Flash** ile hızlı veri çekme:
 
 ```typescript
 import { VisionEngine } from "ai-vision-scraper";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// 1. Kendi anahtarınızla Gemini'yi başlatın
-const genAI = new GoogleGenerativeAI("SENIN_GEMINI_API_ANAHTARIN");
+// 1. Gemini istemcinizi kurun
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-async function main() {
-    // 2. Motoru kullanmak istediğimiz Yapay Zeka ile (Gemini) ayağa kaldırıyoruz
-    const engine = new VisionEngine({
-        aiProvider: async (prompt, imageBase64) => {
-            const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
-            const result = await model.generateContent([
-                { text: prompt },
-                { inlineData: { mimeType: "image/png", data: imageBase64 } }
-            ]);
-            return result.response.text();
-        }
+async function run() {
+  // 2. VisionEngine'i AI sağlayıcınızla bağlayın
+  const engine = new VisionEngine({
+    aiProvider: async (prompt, imageBase64) => {
+      const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
+      const result = await model.generateContent([
+        { text: prompt },
+        { inlineData: { mimeType: "image/png", data: imageBase64 } }
+      ]);
+      return result.response.text();
+    }
+  });
+
+  const url = "https://example-shop.com/deals";
+  const prompt = "Ekranda gördüğün indirimli ürünlerin adını, eski fiyatını ve yeni fiyatını bul.";
+
+  try {
+    console.log("🚀 Görsel analiz ve bypass motoru başlatılıyor...");
+    
+    // 3. Chaos Engine & Stealth mod aktif olarak çalıştırın!
+    const data = await engine.extract(url, prompt, {
+      fullPage: false,       // Tüm sayfayı çekmek istiyorsanız true yapın
+      stealth: true,        // 3 aşamalı anti-bot bypass aktif
+      lightBehavior: true,  // Daha hızlı sonuç için hafif insan simülasyonu
     });
 
-    const targetUrl = "https://books.toscrape.com/";
-
-    // 3. Ne İstediğinizi Söyleyin (Doğal dil ile yönlendirme)
-    const instruction = "Sayfada gördüğün ilk 3 kitabın adını ve fiyatını bul ve dürüstçe JSON formatında dön.";
-
-    try {
-        console.log(`🚀 ${targetUrl} adresine uçuluyor...`);
-        
-        // 4. Extraction İşlemi - Hedef siteye bağlan ve analiz et!
-        const result = await engine.extract(targetUrl, instruction, { fullPage: false });
-        
-        console.log("✅ İşlem Başarılı! Yapay Zekanın Çıkardığı Veri:");
-        console.log(JSON.stringify(result, null, 2));
-    } catch (error) {
-        console.error("❌ Hata Oluştu:", error);
-    }
+    console.log("✅ Kusursuz Yapılandırılmış JSON Çıktısı:");
+    console.log(JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error("❌ Aşılamayan Hata:", error);
+  }
 }
-main();
+
+run();
 ```
 
 ---
 
-## 💻 Harekete Geç (OpenAI GPT-4o Örneği)
-
-Ben ChatGPT'den vazgeçmem diyenlerdenseniz:
-```bash
-npm install openai
-```
+## 💻 OpenAI (GPT-4o) ile Entegrasyon
 
 ```typescript
 import { VisionEngine } from "ai-vision-scraper";
 import OpenAI from "openai";
 
-const openai = new OpenAI({ apiKey: "SENIN_OPENAI_ANAHTARIN" });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-async function main() {
-    const engine = new VisionEngine({
-        aiProvider: async (prompt, imageBase64) => {
-            const response = await openai.chat.completions.create({
-                model: "gpt-4o",
-                messages: [
-                    {
-                        role: "user",
-                        content: [
-                            { type: "text", text: prompt },
-                            { type: "image_url", image_url: { url: `data:image/png;base64,${imageBase64}` } }
-                        ],
-                    },
-                ],
-            });
-            return response.choices[0].message.content || "";
-        }
+const engine = new VisionEngine({
+  aiProvider: async (prompt, imageBase64) => {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            { type: "image_url", image_url: { url: `data:image/png;base64,${imageBase64}` } }
+          ],
+        },
+      ],
     });
-
-    console.log("🚀 Hacker News taranıyor...");
-    // Sadece bir cümlelik komut!
-    const result = await engine.extract("https://news.ycombinator.com/", "Bana ilk 5 haberin başlığını dön.");
-    
-    console.log("Haberler:", result);
-}
-main();
+    return response.choices[0].message.content || "";
+  }
+});
 ```
 
 ---
 
-## 💡 Sınırları Zorlayacak Proje Fikirleri
+## ⚙️ Ekran Görüntüsü & DOM Alma (REST API Modu)
 
-Bu motor sadece basit bir veri çekici değil, dijital dünyayı sizin adınıza 7/24 görsel olarak gözetleyen otonom bir gözdür:
+VisionScrape sadece bir SDK değil, aynı zamanda Express tabanlı bir REST API olarak da çalışabilir. Gelişmiş mimarimiz veri kazımayı **Scrape** ve **Analyze** olarak ikiye böler. Bu sayede görsel boyutlarını küçülterek token maliyetlerini asimptotik olarak düşürürsünüz.
 
-1. 🛒 **E-Ticaret İstihbarat Ajanı:** Rakiplerinizin sayfalarındaki fiyatları saatlik olarak arka planda dolaşıp izleyen, olağandışı bir indirim yapılmışsa size Telegram veya Discord üzerinden saniyeler içinde "Saldır!" mesajı atan otonom bir sistem.
-2. 📈 **Kripto & Borsa Dinamik Analizi:** Çılgın grafiklerin ve karmaşık canvas elementlerinin yer aldığı, normal botların hiçbir zaman okuyamayacağı borsa sitelerinde sadece **"Grafikteki güncel formasyon değerini ve rengi al"** diyerek canlı veri akışı yakalamak.
-3. 🏠 **Otonom Gayrimenkul & Araç Avcısı:** Sahibinden gibi platformlarda saatlerce gezmek yerine, belirlediğiniz filtrelerde yeni bir ev/araba ilanı düştüğünde arabanın plakasını, fotoğrafını ve net bilgilerini okuyan süper hızlı bir bot.
+```bash
+# Sunucuyu başlatın
+cd Engine && npm run dev
+```
+
+### API Endpoint'leri
+
+| Metot | Endpoint | Güvenlik | Açıklama |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/health` | Herkese Açık | Sunucu sağlık durumu ve RAM kullanımı |
+| `POST` | `/api/fetch-site` | `x-api-key` Gerekli | Sayfaya stealth mod ile gidip base64 resim ve DOM döner |
+| `POST` | `/api/analyze` | `x-api-key` Gerekli | Alınan resmi AI'ye yollayıp DOM doğrulamasından geçirir |
 
 ---
 
-## 🤝 Bize Katıl, Yıldız Ver ve Destek Ol! 🌟
+## 🚀 İlham Verici Fikirler: Neler Yapabilirsiniz?
 
-Bu proje, açık kaynak topluluğunun gücü ve inovasyona inancın bir eseri olarak kuruldu. Yıllardır süregelen "kod kazıyarak" veya "XPath avlayarak" veri bulma ızdırabına son veren, geleceğin **"Görsel Zeka" (Vision)** odaklı sisteminin temellerini inşa ediyoruz.
+VisionScrape ile klasik scraping dünyasının sınırlarını aşın:
+1. 🛒 **E-Ticaret İstihbarat Ajanı:** Rakiplerinizin sayfalarındaki fiyatları saatlik olarak arka planda dolaşıp izleyen, olağandışı bir indirim yapılmışsa size anında Telegram veya Discord üzerinden bildiren otonom sistemler.
+2. 📊 **Canlı Grafik Okuyucular:** Borsa ve kripto para platformlarındaki karmaşık canvas grafiklerini anlık olarak görsel analizden geçirip formasyon tespiti yapan otonom indikatörler.
+3. 🏠 **Gayrimenkul & İlan Avcıları:** Emlak sitelerinde yeni bir ilan düştüğü an arabanın plakasını, evin konumunu fotoğraflardan tanıyıp analiz eden otonom ajanlar.
 
-**Nasıl Destek Olabilirsin?**
-- **⭐ Yıldıza Tıkla:** Lütfen en yukarıdaki **Star** butonuna basarak projenin dünyanın her yerindeki geliştiriciler tarafından görülmesine ve en tepeye çıkmasına en büyük katkıyı hemen şimdi sağla. Çünkü sizin yıldızlarınız bu projenin yakıtı!
-- **🛠️ Forkla ve Katkıda Bulun:** Projeyi iyileştir veya GitHub Issues kısmında vizyoner fikirlerini paylaş. Anthropic veya Llama gibi yeni yapay zeka modelleriyle test edip PR atmaktan aska çekinme.
-- **📣 Ateşi Yay:** Kurduğun çılgın otonom sistemleri X (Twitter), LinkedIn, veya Reddit gibi platformlarda etiketleyerek paylaş!
+---
 
-Birkaç kod satırı ile internetin bütün algısını alt üst ediyor, dijital sınırları yıkıyorsun...
-Masaüstünün başına geç. Limit sadece sensin...
-**Hemen fırlatmaya hazırlan! 🚀🔥**
+## 🤝 Katkıda Bulun & Destek Ol! 🌟
+
+Bu proje, açık kaynak topluluğunun gücü ve internetin özgür kalması vizyonuyla geliştirilmektedir.
+
+- **⭐ Star Bırakın:** Bu projenin daha fazla geliştiriciye ulaşması ve bot duvarlarına karşı savaşında yakıt olması için en yukarıdan bir yıldızınızı rica ediyoruz!
+- **🛠️ Fork & PR:** Yeni bypass yöntemleri, optimizasyonlar veya yeni AI sağlayıcıları ile entegrasyonlar hazırlayıp PR göndermekten asla çekinmeyin!
+
+**Limitleri zorlayın. Dijital sınırları görsel zeka ile aşın! 🚀🔥**

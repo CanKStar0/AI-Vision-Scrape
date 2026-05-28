@@ -80,12 +80,12 @@ export interface VisionEngineOptions {
 ```
 Uygulamayı başlatan geliştirici, `new VisionEngine({ aiProvider: myCustomFunction })` şeklinde motoru başlatır. Bu yapı, gelecekte farklı makine öğrenmesi API'leri çıktığında sistemin güncellenmeden kullanılabilmesini sağlar. Güvenlik tarafında ise; **API Key**'ler asla VisionEngine'in kendisine gömülmez. Sorumluluk, `aiProvider` metodunu sağlayan üst katmandadır.
 
-### 4.2. `extract()` Metodu ve Playwright Akışı
-Engine'in temel iş fonksiyonu `extract(url, instruction, options)` metodudur.
+### 4.2. `extract()` Metodu, Opsiyonlar ve Playwright Akışı
+Engine'in temel iş fonksiyonu `extract(url, instruction, options)` metodudur. v1.0.5 itibarıyla bu fonksiyon inanılmaz bir evrim geçirmiştir:
 
-1. **Bot Koruması Aşımı (Bot Bypass):** Playwright, stealth plugin ile açılır. Sadece stealth yetmez, `Object.defineProperty(navigator, "webdriver", { get: () => undefined });` ek init script'i gömülerek Cloudflare ve Datadome gibi sistemleri aşma şansı yükseltilir.
-2. **Context Yönetimi:** Browser üzerinden yeni bir `newContext` açılır. Tarayıcı boyutu standart (1920x1080) tutulur, viewport ayarlanır ve sayfa `domcontentloaded` durumuna kadar beklenir. Sayfadaki JavaScript render süreçleri düşünülerek statik bekleme süreleri (örneğin 3000ms delay) esnek bırakılmıştır.
-3. **Ekran Görüntüsü Boyutu (FullPage Flag):** Optimizasyon gereği `options.fullPage = false` varsayılandır. Eğer sayfanın altlarındaki veriler gerekliyse geliştirici bu flag'i true yapar. Ajanlar gereksiz yere `fullPage: true` kullanımından kaçınmalıdır (çünkü ekran görüntüleri devasa Base64 metinlerine dönüşerek LLM'i bloke edebilir veya token limitine sokabilir).
+1. **Bot Koruması Aşımı (Bot Bypass) ve Chaos Engine:** Sadece standart bir `stealth` plugin (eklenti) yetmez. `options.stealth` ve `options.lightBehavior` (İnsan davranışı simülasyonu / Chaos Engine) devreye sokulmuştur. Cloudflare ve Datadome gibi sistemleri aşmak için tarayıcı izleri tamamen maskelenir `Object.defineProperty(navigator, "webdriver", { get: () => undefined });`.
+2. **Context Yönetimi:** Browser üzerinden yeni bir `newContext` açılır. Tarayıcı boyutu standart (1920x1080) tutulur, viewport ayarlanır ve sayfa `domcontentloaded` durumuna kadar beklenir. 
+3. **Ekran Görüntüsü Boyutu (FullPage Flag):** Optimizasyon gereği `options.fullPage = false` varsayılandır. Eğer sayfanın altlarındaki veriler gerekliyse geliştirici bu flag'i true yapar.
 
 ### 4.3. Prompt Sanitization ve Data Serialization
 AI ile konuşurken, dönen verinin her zaman sağı solu temizlenmiş bir string olması beklenemez. LLM'ler kimi zaman veriyi `` ```json `{ "data": 1 }` ``` `` şeklinde kod bloğu ile gönderir.
@@ -98,15 +98,17 @@ Herhangi bir JSON parse hatası veya AI dönüt hatası *MUTLAK* bir `try-catch`
 
 ---
 
-## 5. Tarayıcı Yönetimi & Ölçeklenebilirlik (`browserManager.js`)
+## 5. 3-Aşamalı Anti-Bot Sistemi (Chaos Engine) & Tarayıcı Yönetimi (`browserManager.js`)
 
-Web otomasyonunda yapılabilecek en ölümcül hata, her scraping isteğinden önce `chromium.launch()` çağrısı yapmaktır. Headless tarayıcıları başlatmak yarım saniyeden, iki saniyeye kadar süren, çok ağır RAM ve CPU maliyeti olan bir süreçtir.
+v1.0.5 devralmasıyla klasik Playwright yönetimi yerini askeri düzeyde bir zırha bırakmıştır. VisionScrape, basit bir Headless tarayıcı sarmalı değil; siteleri kandıran 3 Aşamalı bir "Chaos Engine" donanımına sahiptir. `src/services/` klasöründe yer alan bu servisler şunlardır:
 
-VisionScrape mimarisi bunun önüne geçmek için `services/browserManager.js` üzerinde **Singleton (Tekil Tasarım Kalıbı)** uygular.
+1. **`humanBehavior.js` (İnsan Davranışı Simülasyonu):** Fare aniden koordinata ışınlanmaz. Gauss dağılımı kullanılarak fare titretilir, hedefe önce yaklaşıp sonra tıklanır. `lightBehavior: true` opsiyonu ile sayfa render olurken bot rastgele scroll yaparak içeriğin tetiklenmesini (lazy-loading) doğal bir şekilde sağlar.
+2. **`fingerprintForge.js` (Kimlik Sahteciliği):** Gelişmiş korumaları aşmak için her `context` açılışında WebGL görüntüleri (image data) maskelenir, Canvas üzerine mikroskobik Noise (Gürültü/Parazit) eklenir ve Battery API / ekran çözünürlüğü gibi donanım spesifikasyonları her sunucu isteğinde farklı gösterilir.
+3. **`networkCloak.js` (Ağ Maskeleme):** Giden HTTP paketleri (headers, TLS fingerprint) gerçek bir Chrome ağ yapısına birebir benzetilerek Cloudflare / Akamai gibi analiz cihazlarına "ben gerçek Chrome'um" der.
 
-- **`launch()` Süreci:** Sunucu (server.js) ayağa kalktığında ilk iş Chromium tek bir defa çalıştırılır. Buradaki `args` dizisi Node'un Docker gibi ortamlarda çöktüğünü (crashing) engellemek adına eklentiler içerir (`--no-sandbox`, `--disable-dev-shm-usage`, `--disable-gpu`).
-- **`createContext()` ve Konzol İzolasyonu:** İstek geldiğinde tarayıcı yeniden açılmaz, `browser.newContext()` çağrılır. Her Context çerezleri, Local Storage'i ve Cache'i sıfır (temiz) olan birbirinden izole "Gizli Sekmeler" gibidir. API çok yüksek istek alsa dahi, aynı Chromium prosesi üzerindeki birden fazla sekme (page) iş yükünü bölüşür.
-- **Resource Cleanup (Sızıntı Önleme):** Ajanların uyması gereken katı kural şudur: İstek (request) bitiminde oluşturulan `context` mutlaka `.close()` ile bellekten temizlenmelidir. Express `finally` blokları bu bağlamda kritik önem taşır. Aksi taktirde Zombie prosesler oluşur.
+Bunun yanı sıra Memory-leak (RAM Sızıntısı) önlemek için **Singleton** tasarım kalıbı geçerlidir:
+- **`launch()` Süreci:** Sunucu (server.js) ayağa kalktığında ilk iş Chromium tek bir defa çalıştırılır. Yeni iz bırakmayan headless modu (new headless engine) zorunludur.
+- **Resource Cleanup (Sızıntı Önleme):** İstek bitiminde oluşturulan `context` mutlaka `.close()` ile bellekten temizlenmelidir.
 
 ---
 
